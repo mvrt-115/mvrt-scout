@@ -2,6 +2,7 @@ package com.mvrt.scout;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -55,78 +56,6 @@ public class CreateRecordActivity extends ActionBarActivity implements ViewPager
 
     public void startAuto(View view) {
         disableablePager.setCurrentItem(NUM_AUTO, true);
-    }
-
-    public void grabInitials(final View view) {
-        EditText[] teams = {
-            (EditText) findViewById(R.id.team_number_1),
-            (EditText) findViewById(R.id.team_number_2),
-            (EditText) findViewById(R.id.team_number_3) };
-
-        boolean cont = false;
-
-        for (EditText team : teams) {
-            if (team.getText().toString().trim().isEmpty() || !team.getText().toString().matches("^[0-9]+$")) { //just in case
-                team.setError("The team number cannot be empty");
-                cont = true;
-            }
-        }
-
-        if (cont) return;
-
-        AlertDialog.Builder grabInitials = new AlertDialog.Builder(this);
-
-        grabInitials.setMessage("Please enter your initials");
-        grabInitials.setCancelable(true);
-
-        final EditText input = new EditText(this);
-        final LinearLayout layout = new LinearLayout(this);
-
-        input.setTextColor(getResources().getColor(R.color.text_primary_dark));
-        input.setHintTextColor(getResources().getColor(R.color.text_secondary_dark));
-
-        int padding = (int)(20 * getResources().getDisplayMetrics().density);
-
-        input.setPadding(padding, padding / 2, padding, padding / 2);
-
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-
-        final View v = findViewById(android.R.id.content);
-
-        layout.setPaddingRelative(padding, 0, padding, 0);
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        layout.addView(input);
-
-        grabInitials.setView(layout);
-
-        grabInitials.setPositiveButton("Submit",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog,
-                                        int whichButton) {
-
-                        if (input.getText().toString().isEmpty() || input.getText().toString() == null) {
-                            Toaster.burnToast("You have to enter your initials!", Toaster.TOAST_SHORT);
-                        } else if (input.getText().toString().length() >= 2) {
-                            ((ScoutBase)getApplication()).getDataManager().setScoutInitials(input.getText().toString());
-                            startAuto(view);
-                        }
-
-                        ((InputMethodManager) ScoutBase.getAppContext().getSystemService(ScoutBase.INPUT_METHOD_SERVICE))
-                                .hideSoftInputFromWindow(input.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-                    }
-                });
-
-        grabInitials.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                ((InputMethodManager) ScoutBase.getAppContext().getSystemService(ScoutBase.INPUT_METHOD_SERVICE))
-                        .hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-            }
-        });
-
-        grabInitials.show();
     }
 
     public String getTitleFromPosition(int i) {
@@ -191,5 +120,82 @@ public class CreateRecordActivity extends ActionBarActivity implements ViewPager
         public int getCount() {
             return fragmentList.length;
         }
+    }
+
+    public void grabInitials(final View view) {
+        EditText[] teams = {
+                (EditText) findViewById(R.id.team_number_1),
+                (EditText) findViewById(R.id.team_number_2),
+                (EditText) findViewById(R.id.team_number_3) };
+
+        boolean cont = false;
+
+        for (EditText team : teams) {
+            if (team.getText().toString().trim().isEmpty() || !team.getText().toString().matches("^[0-9]+$")) { //just in case
+                team.setError("The team number cannot be empty");
+                cont = true;
+            }
+        }
+
+        if (cont) return;
+
+        AlertDialog.Builder grabInitials = new AlertDialog.Builder(this);
+
+        grabInitials.setMessage("Please enter your initials");
+        grabInitials.setCancelable(true);
+
+        final EditText input = new EditText(this);
+        final LinearLayout layout = new LinearLayout(this);
+
+        input.setTextColor(getResources().getColor(R.color.text_primary_dark));
+        input.setHintTextColor(getResources().getColor(R.color.text_secondary_dark));
+
+        int padding = (int)(20 * getResources().getDisplayMetrics().density);
+
+        input.setPadding(padding, padding / 2, padding, padding / 2);
+
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+
+        final View v = findViewById(android.R.id.content);
+
+        layout.setPaddingRelative(padding, 0, padding, 0);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        layout.addView(input);
+
+        grabInitials.setView(layout);
+
+        grabInitials.setPositiveButton("Submit",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int whichButton) {
+
+                        if (input.getText().toString().isEmpty() || input.getText().toString() == null) {
+                            Toaster.burnToast("You have to enter your initials!", Toaster.TOAST_SHORT);
+                        } else if (input.getText().toString().length() >= 2) {
+                            ((ScoutBase)getApplication()).getDataManager().setScoutInitials(input.getText().toString());
+
+                            startAuto(view);
+                        }
+                    }
+                });
+
+        grabInitials.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                closeKeyboardInput();
+            }
+        });
+        grabInitials.show();
+    }
+
+    public void closeKeyboardInput() { //waits for a while, so that the alert dialog closes, then hides keyboard
+        getWindow().getDecorView().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                InputMethodManager imm = (InputMethodManager) ScoutBase.getAppContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
+        }, 50);
     }
 }
