@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MVRTScout.iml" filepath="$PROJECT_DIR$/MVRTScout.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mvrt-scout.iml" filepath="$PROJECT_DIR$/mvrt-scout.iml" />
       <module fileurl="file://$PROJECT_DIR$/scout/scout.iml" filepath="$PROJECT_DIR$/scout/scout.iml" />
       <module fileurl="file://$PROJECT_DIR$/super/super.iml" filepath="$PROJECT_DIR$/super/super.iml" />
     </modules>
