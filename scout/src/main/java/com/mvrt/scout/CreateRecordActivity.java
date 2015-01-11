@@ -68,6 +68,8 @@ public class CreateRecordActivity extends ActionBarActivity implements ViewPager
             if (team.getText().toString().trim().isEmpty() || !team.getText().toString().matches("^[0-9]+$")) { //just in case
                 team.setError("The team number cannot be empty");
                 cont = true;
+            } else {
+                team.setError(null);
             }
         }
 
